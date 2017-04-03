@@ -1,0 +1,10 @@
+﻿  Practica3AC.cpp
+Practica3AC.cpp(3): warning C4005: '__CLR_VER': macro redefinition
+  Practica3AC.cpp(3): note: command-line arguments:  see previous definition of '__CLR_VER'
+Practica3AC.cpp(3): warning C4651: '/D__CLR_VER=40601586' specified for precompiled header but not for current compile
+Practica3AC.cpp(25): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\ccant\documents\visual studio 2015\projects\practica3ac\practica3ac\practica3ac.cpp(58): warning C4700: uninitialized local variable 'nx' used
+c:\users\ccant\documents\visual studio 2015\projects\practica3ac\practica3ac\practica3ac.cpp(59): warning C4700: uninitialized local variable 'ny' used
+  AssemblyInfo.obj : /DEBUG:FASTLINK is not supported when managed code is present; restarting link with /DEBUG:FULL
+  Practica3AC.vcxproj -> C:\Users\ccant\documents\visual studio 2015\Projects\Practica3AC\Debug\Practica3AC.exe
+  Practica3AC.vcxproj -> C:\Users\ccant\documents\visual studio 2015\Projects\Practica3AC\Debug\Practica3AC.pdb (Partial PDB)
