@@ -32,6 +32,7 @@ initializeRandom(float*  vpoints, int dim)
 void
 applyNormal(float* vpoints, float* vnormal, int u, int v)
 {
+	float x1, y1, z1, x2, y2, z2, nx, ny, nz;
 	for (int i = 1; i+1 < u; i++) //Iterates trough 2nd to next-to-last row
 	{
 		for (int j = 3; j + 3 < v; j = j + 3) //Iterates throw colums from 2nd to next-to-last
@@ -45,8 +46,6 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			int down = top + 2 * v;
 			int down_right = right + v;
 			int center = i * v + j;
-
-			float x1, y1, z1, x2, y2, z2, nx, ny, nz = 0.0;
 			//vtop-left vs vtop
 			x1 = vpoints[top_left] - vpoints[center];
 			y1 = vpoints[top_left + 1] - vpoints[center + 1];
@@ -125,8 +124,26 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			vnormal[center] = nx / 8;
 			vnormal[center + 1] = ny / 8;
 			vnormal[center + 2] = nz / 8;
+
+			nx = 0.0;ny = 0.0;nz = 0.0;
 		}
 	}
+	//top-left corner
+	x1 = vpoints[0];
+	y1 = vpoints[1];
+	z1 = vpoints[2];
+
+	x2 = vpoints[3];
+	y2 = vpoints[4];
+	z2 = vpoints[5];
+
+	//down-left corner
+	//top-right corner
+	//top-down corner
+	//topmost row
+	//downmost row
+	//leftmost column
+	//rightmost column
 }
 void 
 printMalla(float * vpoints, int u, int v)
