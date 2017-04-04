@@ -1,11 +1,5 @@
-﻿  stdafx.cpp
-  AssemblyInfo.cpp
-  Practica3AC.cpp
+﻿  Practica3AC.cpp
 Practica3AC.cpp(25): warning C4244: 'argumento': conversión de 'time_t' a 'unsigned int'; posible pérdida de datos
-  Generando código...
-c:\users\eps\desktop\proyectos\ac\practica3ac\practica3ac.cpp(58): warning C4700: se utilizó la variable local 'nx' sin inicializar
-c:\users\eps\desktop\proyectos\ac\practica3ac\practica3ac.cpp(59): warning C4700: se utilizó la variable local 'ny' sin inicializar
-  .NETFramework,Version=v4.5.2.AssemblyAttributes.cpp
   AssemblyInfo.obj : /DEBUG:FASTLINK no se admite cuando hay presente código administrado; reiniciando vínculo con /DEBUG:FULL
-  Practica3AC.vcxproj -> C:\Users\EPS\Desktop\proyectos\AC\x64\Debug\Practica3AC.exe
-  Practica3AC.vcxproj -> C:\Users\EPS\Desktop\proyectos\AC\x64\Debug\Practica3AC.pdb (Partial PDB)
+  Practica3AC.vcxproj -> C:\Users\EPS\Desktop\ac\AC\x64\Debug\Practica3AC.exe
+  Practica3AC.vcxproj -> C:\Users\EPS\Desktop\ac\AC\x64\Debug\Practica3AC.pdb (Partial PDB)

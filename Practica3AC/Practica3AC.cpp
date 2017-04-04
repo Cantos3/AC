@@ -1,5 +1,13 @@
 // Practica3AC.cpp : main project file.
-
+/**
+---------------------------------------------------------------------------------------------------------------
+---------------------------------------------PRÁCTICA DE AC----------------------------------------------------
+---     Este main es la base del proyecto, la idea es que, dependiendo de los argumentos del programa,      ---
+---     ejecute los métodos de ordenación de matrices en C, ensamblador, o ensamblador con SSE y además     ---
+---     se introduzca la matriz desde teclado o desde un fichero (a implementar)                            ---
+---------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------
+*/
 #include "stdafx.h"
 #include <random>
 #include <time.h>
@@ -8,6 +16,9 @@
 
 using namespace System;
 
+
+//Variables globales de gestión de argumentos
+bool ALGc = false, ALGassemble = false, ALGassemblysse = false, fromFile = false;
 long double
 tiempo(void) {
 	//TODO: Implementar
@@ -25,14 +36,14 @@ initializeRandom(float*  vpoints, int dim)
 	srand(time(NULL));
 	for (int i = 0; i < dim; i++)
 	{
-		vpoints[i] = (float)rand() / (float)RAND_MAX;
+		vpoints[i] = (float)rand() / (float)RAND_MAX * 10;
 	}
 }
 
 void
 applyNormal(float* vpoints, float* vnormal, int u, int v)
 {
-	float x1, y1, z1, x2, y2, z2, nx, ny, nz;
+	float x1, y1, z1, x2, y2, z2, nx=0.0, ny=0.0, nz=0.0;
 	for (int i = 1; i+1 < u; i++) //Iterates trough 2nd to next-to-last row
 	{
 		for (int j = 3; j + 3 < v; j = j + 3) //Iterates throw colums from 2nd to next-to-last
@@ -46,7 +57,7 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			int down = top + 2 * v;
 			int down_right = right + v;
 			int center = i * v + j;
-			//vtop-left vs vtop
+			//vtop-left x vtop
 			x1 = vpoints[top_left] - vpoints[center];
 			y1 = vpoints[top_left + 1] - vpoints[center + 1];
 			z1 = vpoints[top_left + 2] - vpoints[center + 2];
@@ -58,7 +69,7 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			ny += z1 * x2 - z2 * x1;
 			nz += x1 * y2 - x2 * y1;
 
-			//vtop vs vtop-right
+			//vtop x vtop-right
 			x1 = vpoints[top_right] - vpoints[center];
 			y1 = vpoints[top_right + 1] - vpoints[center + 1];
 			z1 = vpoints[top_right + 2] - vpoints[center + 2];
@@ -67,7 +78,7 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			ny += z2 * x1 - z1 * x2;
 			nz += x2 * y1 - x1 * y2;
 
-			//vtop-right vs vright
+			//vtop-right x vright
 			x2 = vpoints[right] - vpoints[center];
 			y2 = vpoints[right + 1] - vpoints[center + 1];
 			z2 = vpoints[right + 2] - vpoints[center + 2];
@@ -76,7 +87,7 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			ny += z1 * x2 - z2 * x1;
 			nz += x1 * y2 - x2 * y1;
 
-			//vright vs vdown-right
+			//vright x vdown-right
 			x1 = vpoints[down_right] - vpoints[center];
 			y1 = vpoints[down_right + 1] - vpoints[center + 1];
 			z1 = vpoints[down_right + 2] - vpoints[center + 2];
@@ -85,7 +96,7 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			ny += z2 * x1 - z1 * x2;
 			nz += x2 * y1 - x1 * y2;
 
-			//vdown-right vs vdown
+			//vdown-right x vdown
 			x2 = vpoints[down] - vpoints[center];
 			y2 = vpoints[down + 1] - vpoints[center + 1];
 			z2 = vpoints[down + 2] - vpoints[center + 2];
@@ -94,7 +105,7 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			ny += z1 * x2 - z2 * x1;
 			nz += x1 * y2 - x2 * y1;
 
-			//vdown vs vdown-left
+			//vdown x vdown-left
 			x1 = vpoints[down_left] - vpoints[center];
 			y1 = vpoints[down_left + 1] - vpoints[center + 1];
 			z1 = vpoints[down_left + 2] - vpoints[center + 2];
@@ -103,7 +114,7 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			ny += z2 * x1 - z1 * x2;
 			nz += x2 * y1 - x1 * y2;
 
-			//vdown-left vs vleft
+			//vdown-left x vleft
 			x2 = vpoints[left] - vpoints[center];
 			y2 = vpoints[left + 1] - vpoints[center + 1];
 			z2 = vpoints[left + 2] - vpoints[center + 2];
@@ -112,7 +123,7 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			ny += z1 * x2 - z2 * x1;
 			nz += x1 * y2 - x2 * y1;
 
-			//vleft vs vtop-left
+			//vleft x vtop-left
 			x1 = vpoints[top_left] - vpoints[center];
 			y1 = vpoints[top_left + 1] - vpoints[center + 1];
 			z1 = vpoints[top_left + 2] - vpoints[center + 2];
@@ -128,16 +139,82 @@ applyNormal(float* vpoints, float* vnormal, int u, int v)
 			nx = 0.0;ny = 0.0;nz = 0.0;
 		}
 	}
-	//top-left corner
-	x1 = vpoints[0];
-	y1 = vpoints[1];
-	z1 = vpoints[2];
+	//top-left corner: 
+		//right x down-right
+	x1 = vpoints[3] - vpoints[0];
+	y1 = vpoints[4] - vpoints[1];
+	z1 = vpoints[5] - vpoints[2];
 
-	x2 = vpoints[3];
-	y2 = vpoints[4];
-	z2 = vpoints[5];
+	x2 = vpoints[v+3] - vpoints[0];
+	y2 = vpoints[v+4] - vpoints[1];
+	z2 = vpoints[v+5] - vpoints[2];
 
-	//down-left corner
+	nx += y1 * z2 - y2 * z1;
+	ny += z1 * x2 - z2 * x1;
+	nz += x1 * y2 - x2 * y1;
+
+		//down-right x down
+	x1 = vpoints[v + 3] - vpoints[0];
+	y1 = vpoints[v + 4] - vpoints[1];
+	z1 = vpoints[v + 5] - vpoints[2];
+
+	nx += y2 * z1 - y1 * z2;
+	ny += z2 * x1 - z1 * x2;
+	nz += x2 * y1 - x1 * y2;
+
+	//down x right
+
+	x2 = vpoints[3] - vpoints[0];
+	y2 = vpoints[4] - vpoints[1];
+	z2 = vpoints[5] - vpoints[2];
+
+	nx += y1 * z2 - y2 * z1;
+	ny += z1 * x2 - z2 * x1;
+	nz += x1 * y2 - x2 * y1;
+
+	vnormal[0] = nx / 3;
+	vnormal[1] = ny / 3;
+	vnormal[2] = nz / 3;
+
+	nx = 0.0;ny = 0.0;nz = 0.0;
+
+	//down-left corner:
+		//top x top-right
+	x1 = vpoints[(u-2) * v] - vpoints[(u-1)* v];
+	y1 = vpoints[(u-2) * v +1] - vpoints[(u-1) * v + 1];
+	z1 = vpoints[(u-2) * v +2] - vpoints[(u-1) * v + 2];
+
+	x2 = vpoints[(u - 2) * v + 3] - vpoints[(u - 1)* v];
+	y2 = vpoints[(u - 2) * v + 4] - vpoints[(u - 1) * v + 1];
+	z2 = vpoints[(u - 2) * v + 5] - vpoints[(u - 1) * v + 2];
+
+	nx += y1 * z2 - y2 * z1;
+	ny += z1 * x2 - z2 * x1;
+	nz += x1 * y2 - x2 * y1;
+
+		//top-right x right
+	x1 = vpoints[(u - 1) * v + 3] - vpoints[(u - 1)* v];
+	y1 = vpoints[(u - 1) * v + 4] - vpoints[(u - 1) * v + 1];
+	z1 = vpoints[(u - 1) * v + 5] - vpoints[(u - 1) * v + 2];
+
+	nx += y2 * z1 - y1 * z2;
+	ny += z2 * x1 - z1 * x2;
+	nz += x2 * y1 - x1 * y2;
+
+		//right x top
+	x2 = vpoints[(u - 2) * v] - vpoints[(u - 1)* v];
+	y2 = vpoints[(u - 2) * v + 1] - vpoints[(u - 1) * v + 1];
+	z2 = vpoints[(u - 2) * v + 2] - vpoints[(u - 1) * v + 2];
+
+	nx += y1 * z2 - y2 * z1;
+	ny += z1 * x2 - z2 * x1;
+	nz += x1 * y2 - x2 * y1;
+
+	vnormal[(u - 1)* v] = nx / 3;
+	vnormal[(u - 1)* v + 1] = ny / 3;
+	vnormal[(u - 1)* v + 2] = nz / 3;
+
+	nx = 0.0;ny = 0.0;nz = 0.0;
 	//top-right corner
 	//top-down corner
 	//topmost row
@@ -165,13 +242,26 @@ int
 main(int argc, char* argv[])
 {
 	int u, v;
-	if (argc == 1)
+	//Gestión de argumentos
+	for (int i = 1; i <= argc; i++)
+	{
+		if (argv[i] == "-c") ALGc = true;
+		if (argv[i] == "-a") ALGassemble = true;
+		if (argv[i] == "-s") ALGassemblysse = true;
+		if (argv[i] == "-f")
+		{
+			fromFile = true;
+			//Gestiona fichero
+		}
+	}
+	if (!fromFile)
 	{
 		Console::WriteLine("Introduzca la dimension x de la matriz");
 		v = 3 * int::Parse(Console::ReadLine());
 		Console::WriteLine("Introduzca la dimension y de la matriz");
 		u = int::Parse(Console::ReadLine());
 	}
+
 	float * vpoints = new float[u * v];
 	initializeRandom(vpoints,u*v);
 	Console::WriteLine("MALLA DE PUNTOS CON VALOR ALEATORIO");
